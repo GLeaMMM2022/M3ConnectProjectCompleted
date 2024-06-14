@@ -1,0 +1,53 @@
+﻿@model List<ContractViewModel>
+
+@{
+    ViewData["Title"] = "Список договоров";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ФИО</th>
+            <th>IP-адрес</th>
+            <th>Тип услуги</th>
+            <th>Дата заключения</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contract in Model)
+        {
+            <tr>
+                <td>@contract.FullName</td>
+                <td>@contract.IpAddress</td>
+                <td>@contract.ServiceType</td>
+                <td>@contract.ContractDate.ToShortDateString()</td>
+                <td>
+                    @if (contract.IsActive)
+                    {
+                        <span class="text-success">Предоставляется</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Отказано</span>
+                    }
+                </td>
+                <td>
+                    <form asp-action="ToggleStatus" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@contract.Id" />
+                        <button type="submit" class="btn btn-link">@((contract.IsActive) ? "Отозвать" : "Активировать")</button>
+                    </form>
+                    <a asp-action="Edit" asp-route-id="@contract.Id" class="btn btn-primary">Редактировать</a>
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Edit" class="btn btn-success">Добавить новый договор</a>
+<a asp-action="SuccessList" class="btn btn-primary">Список активных</a>
+<a asp-action="CancelList" class="btn btn-primary">Список неактивных</a>
